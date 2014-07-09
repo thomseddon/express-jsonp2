@@ -87,7 +87,7 @@ describe('jsonp2', function () {
         res.text.should.equal([
           '<html><!doctype html><html><head>',
             '<meta http-equiv="Content-Type" content="text/html charset=utf-8"/>',
-            '<script type="text/javascript">typeof parent.callme === \'function\' && parent.callme({"name":"thom"});',
+            '<script type="text/javascript">typeof parent.callme === \'function\' && parent.callme("{\\"name\\":\\"thom\\"}", \'*\');',
             '</script>',
           '</head><body></body></html>'].join(''));
         done();

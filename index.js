@@ -53,19 +53,18 @@ function jsonp2 (obj) {
   if (callback && 'string' === typeof callback) {
     var cb = callback.replace(/[^\[\]\w$.]/g, '');
 
-    if (this.req.method !== 'GET') {
-      cb = 'parent.' + cb;
-    }
-
-    body = 'typeof ' + cb + ' === \'function\' && ' + cb + '(' + body + ');';
-
+    // @TODO: cleanup
     if (this.req.method !== 'GET') {
       this.set('Content-Type', 'text/html');
+      cb = 'parent.' + cb;
+      body = JSON.stringify(body, replacer, spaces);
+      body = 'typeof ' + cb + ' === \'function\' && ' + cb + '(' + body + ', \'*\');';
       var html = iframe.slice(0);
       html.splice(1, 0, body);
       body = html.join('');
     } else {
       this.set('Content-Type', 'text/javascript');
+      body = 'typeof ' + cb + ' === \'function\' && ' + cb + '(' + body + ');';
     }
   }
 
