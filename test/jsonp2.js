@@ -54,6 +54,18 @@ describe('jsonp2', function () {
 
   });
 
+  it('should return json in absence of callback', function (done) {
+
+    request(bootstrap())
+      .post('/')
+      .expect(200)
+      .end(function (err, res) {
+        res.text.should.equal('{"name":"thom"}');
+        done();
+      });
+
+  });
+
   it('should wrap in callback if provided', function (done) {
 
     request(bootstrap())

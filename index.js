@@ -50,13 +50,13 @@ function jsonp2 (obj) {
     callback = callback[0];
   }
 
-  // call parent
-  if (this.req.method !== 'GET') {
-    callback = 'parent.' + callback;
-  }
-
   if (callback && 'string' === typeof callback) {
     var cb = callback.replace(/[^\[\]\w$.]/g, '');
+
+    if (this.req.method !== 'GET') {
+      cb = 'parent.' + cb;
+    }
+
     body = 'typeof ' + cb + ' === \'function\' && ' + cb + '(' + body + ');';
 
     if (this.req.method !== 'GET') {
