@@ -56,12 +56,19 @@ function jsonp2 (obj) {
     // @TODO: cleanup
     if (this.req.method !== 'GET') {
       this.set('Content-Type', 'text/html');
+
+      // Call parent
       cb = 'parent.' + cb;
+
+      // IE8 will only pass strings so we stringify again
       body = JSON.stringify(body, replacer, spaces);
-      body = 'typeof ' + cb + ' === \'function\' && ' + cb + '(' + body + ', \'*\');';
-      var html = iframe.slice(0);
-      html.splice(1, 0, body);
-      body = html.join('');
+
+      var parts = [ iframe[0], 'typeof ', cb, ' === \'function\' && ', cb, '(',
+        body, ',', '\'', origin, '\''];
+
+      parts.push(');', iframe[1]);
+
+      body = parts.join('');
     } else {
       this.set('Content-Type', 'text/javascript');
       body = 'typeof ' + cb + ' === \'function\' && ' + cb + '(' + body + ');';
