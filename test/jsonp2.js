@@ -95,4 +95,42 @@ describe('jsonp2', function () {
 
   });
 
+  it('should allow origin to be confirgured', function (done) {
+    var app = bootstrap();
+    app.set('jsonp origin', 'thom.com');
+
+    request(app)
+      .post('/?callback=callme&stateParam=thom')
+      .expect(200)
+      .end(function (err, res) {
+        res.text.should.equal([
+          '<html><!doctype html><html><head>',
+            '<meta http-equiv="Content-Type" content="text/html charset=utf-8"/>',
+            '<script type="text/javascript">typeof parent.callme === \'function\' && parent.callme("{\\"name\\":\\"thom\\"}",\'thom.com\');',
+            '</script>',
+          '</head><body></body></html>'].join(''));
+        done();
+      });
+
+  });
+
+  it('should add state to iframe', function (done) {
+    var app = bootstrap();
+    app.set('jsonp state', 'stateParam');
+
+    request(app)
+      .post('/?callback=callme&stateParam=thom')
+      .expect(200)
+      .end(function (err, res) {
+        res.text.should.equal([
+          '<html><!doctype html><html><head>',
+            '<meta http-equiv="Content-Type" content="text/html charset=utf-8"/>',
+            '<script type="text/javascript">typeof parent.callme === \'function\' && parent.callme("{\\"name\\":\\"thom\\"}",\'*\',\'thom\');',
+            '</script>',
+          '</head><body></body></html>'].join(''));
+        done();
+      });
+
+  });
+
 });

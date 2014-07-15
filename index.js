@@ -41,6 +41,8 @@ function jsonp2 (obj) {
     .replace(/\u2028/g, '\\u2028')
     .replace(/\u2029/g, '\\u2029');
   var callback = this.req.query[app.get('jsonp callback name')];
+  var origin = app.get('jsonp origin') || '*';
+  var state = this.req.query[app.get('jsonp state')];
 
   // content-type
   this.get('Content-Type') || this.set('Content-Type', 'application/json');
@@ -65,6 +67,11 @@ function jsonp2 (obj) {
 
       var parts = [ iframe[0], 'typeof ', cb, ' === \'function\' && ', cb, '(',
         body, ',', '\'', origin, '\''];
+
+      // Add state
+      if (state) {
+        parts.push(',', '\'', state, '\'');
+      }
 
       parts.push(');', iframe[1]);
 
